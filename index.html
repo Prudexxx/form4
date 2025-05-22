@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Создание договора</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="index.css">д
+</head>
+<body>
+<h1>Форма для создания договора</h1>
+<form id="contractForm">
+  <!-- поля формы -->
+  <label>
+    <p> Наименование услуги:</p>
+    <input type="text" id="serviceName" placeholder="Наименование" required>
+  </label><br><br>
+  <label>
+    <p>Дата (день месяц год):</p>
+    <input type="date" id="date" required>
+  </label><br><br>
+  <label>
+    <p> Количество:</p>
+    <input type="number" id="quantity" min="0" required>
+  </label><br><br>
+  <label>
+    <p>Единица измерения:</p>
+    <select id="unit" required>
+      <option value="т">т</option>
+      <option value="м3">м3</option>
+    </select>
+  </label><br><br>
+  <label>
+    <p> Сумма (руб):</p>
+    <input type="number" id="amount" min="0" required>
+  </label><br><br>
+  <label>
+    <p>Заказчик имя:</p>
+    <input type="text" id="customer" placeholder="Иванов И И" required>
+  </label><br><br>
+  <label>
+    <p> Адрес:</p>
+    <input type="text" id="address" placeholder="Новотрактовая, 13" required>
+  </label><br><br>
+  <label>
+    <p>Телефон заказчика:</p>
+    <input type="tel" id="customerPhone" placeholder="8-900-00-00" required>
+  </label><br><br>
+  <!-- кнопки -->
+  <button type="button" onclick="downloadPdf()">Создать договор (скачать)</button>
+  <button type="button" onclick="previewPdf()">Предварительный просмотр</button>
+</form>
+
+<div id="pdfPreview" style="margin-top:20px; border:1px solid #ccc; padding:10px; max-height:400px; overflow:auto;"></div>
+
+<script>
+function getFormData() {
+  const serviceName = document.getElementById('serviceName').value.trim();
+  const dateInput = document.getElementById('date').value;
+  const quantity = document.getElementById('quantity').value;
+  const unit = document.getElementById('unit').value;
+  const amount = document.getElementById('amount').value;
+  const customer = document.getElementById('customer').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const customerPhone = document.getElementById('customerPhone').value.trim();
+
+  const dateObj = new Date(dateInput);
+  if (isNaN(dateObj)) {
+    alert('Пожалуйста, выберите правильную дату.');
+    return null;
+  }
+
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString('ru-RU', options);
+  const day = dateObj.getDate();
+  const monthLong = dateObj.toLocaleString('ru-RU', { month: 'long' });
+  const year = dateObj.getFullYear();
+
+  return {
+    serviceName,
+    dateObj,
+    formattedDate,
+    day,
+    monthLong,
+    year,
+    quantity,
+    unit,
+    amount,
+    customer,
+    address,
+    customerPhone
+  };
+}
+
+function buildHtmlContent(data) {
+  return `
+<h2 style="text-align:center;">АКТ №     1     ОТ       ${data.day}  ${data.monthLong}  ${data.year}г.</h2>
+<p>Исполнитель ИП Михайлов Александр Андреевич <br>
+ИНН 590613985887 ОГРНИП 305590609000010 тел.271-81-41</p>
+<table style="width:100%; border-collapse: collapse; margin-top:10px;">
+<tr>
+  <td style="width:50%; vertical-align: top;">
+    <p>Заказчик: ${data.customer}      ${data.address}</p>
+  </td>
+  <td style="width:50%; vertical-align: top; text-align:right;">
+    <p>Телефон заказчика: ${data.customerPhone}</p>
+  </td>
+</tr>
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-top:10px;" border="1" cellpadding="5" cellspacing="0">
+<tr>
+  <th>№</th>
+  <th>Наименование</th>
+  <th>Кол-во</th>
+  <th>Ед.</th>
+  <th>Сумма, руб.</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td>${data.serviceName}</td>
+  <td>${data.quantity}</td>
+  <td>${data.unit}</td>
+  <td>${data.amount}</td>
+</tr>
+</table>
+
+<p>Всего оказано услуг на сумму: <u>${data.amount}</u> руб.</p>
+<p>Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.</p>
+
+ <!-- Подписи -->
+  <div style="display:flex; justify-content: space-between; margin-top:50px; width:100%; ">
+    <div style="width:45%; text-align:center;">
+      <div style="border-top:1px solid #000; margin-top:50px;">&nbsp;</div>
+      <div>ВОДИТЕЛЬ, ИСПОЛНИТЕЛЬ, ЛОГИСТ</div>
+    </div>
+    <div style="width:45%; text-align:center;">
+      <div style="border-top:1px solid #000; margin-top:50px;">&nbsp;</div>
+      <div>ЗАКАЗЧИК</div>
+    </div>
+  </div>
+
+  <!-- Важная часть, которая раньше не отображалась -->
+  <p style="margin-top:10px;">*Просим ответить на вопрос:</p>
+  <p>Откуда узнали о нашей компании?</p>
+  <p>__________________________________________________</p>
+
+  <p style="margin-top:10px;">Перевод  8- 908-271-81-41 Александр Андреевич М.( Сбербанк)</p>
+</div>
+`;
+}
+
+function downloadPdf() {
+  const data = getFormData();
+  if (!data) return;
+  const content = buildHtmlContent(data);
+  const element = document.createElement('div');
+  element.innerHTML = content;
+  html2pdf().from(element).save(`Акт_${data.formattedDate}.pdf`);
+}
+
+function previewPdf() {
+  const data = getFormData();
+  if (!data) return;
+  const content = buildHtmlContent(data);
+  const container = document.getElementById('pdfPreview');
+  container.innerHTML = '';
+  const element = document.createElement('div');
+  element.innerHTML = content;
+  html2pdf().from(element).outputPdf().then(function(pdfBlob) {
+    const url = URL.createObjectURL(pdfBlob);
+    // Встроенный просмотр PDF
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.style.width = '100%';
+    iframe.style.height = '400px';
+    container.innerHTML = '';
+    container.appendChild(iframe);
+  });
+}
+</script>
+</body>
+</html>

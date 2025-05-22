@@ -1,0 +1,60 @@
+
+    body {
+      font-family: Arial, sans-serif;
+    
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 700px;
+      margin: auto;
+     
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+  
+      margin-bottom: 10px;
+    }
+    input, textarea, select {
+      width: 100%;
+        
+      padding: 10px;
+      box-sizing: border-box;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* p{
+        font-size: 24px;
+    }
+  */
+    @media (max-width: 767px) {
+  body {
+        background-color: aqua;
+        margin: 10px;
+        font-size: 16px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+     form, label {
+    
+        font-size: 20px;
+      }
+      input, select {
+           
+        font-size: 20px;
+        padding: 10px;
+      }
+      button {
+        font-size: 22px;
+        padding: 12px 24px;
+      }
+}
