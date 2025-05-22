@@ -93,7 +93,8 @@ function getFormData() {
 
 function buildHtmlContent(data) {
   return `
-<h2 style="text-align:center;">АКТ №     1     ОТ       ${data.day}  ${data.monthLong}  ${data.year}г.</h2>
+<div style="padding:30px;">
+  <h2 style="text-align:center;">АКТ №     1     ОТ       ${data.day}  ${data.monthLong}  ${data.year}г.</h2>
 <p>Исполнитель ИП Михайлов Александр Андреевич <br>
 ИНН 590613985887 ОГРНИП 305590609000010 тел.271-81-41</p>
 <table style="width:100%; border-collapse: collapse; margin-top:10px;">
@@ -146,9 +147,9 @@ function buildHtmlContent(data) {
 
   <p style="margin-top:10px;">Перевод  8- 908-271-81-41 Александр Андреевич М.( Сбербанк)</p>
 </div>
+</div>
 `;
 }
-
 function downloadPdf() {
   const data = getFormData();
   if (!data) return;
